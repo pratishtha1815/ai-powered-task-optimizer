@@ -1,0 +1,33 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual Environments ──────────────────────────────────────
+venv/
+env/
+.venv/
+ENV/
+
+# ── Large Binary / Generated Files ───────────────────────────
+models/*.h5
+models/*.keras
+data/*.db
+*.db
+data/fer2013/
+logs/*.log
+logs/*.png
+
+# ── Secrets ───────────────────────────────────────────────────
+.env
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

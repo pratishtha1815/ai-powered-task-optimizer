@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────────
+#  AI-Powered Task Optimizer — requirements.txt
+#  Install with:  pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────
+
+# ── Web UI ───────────────────────────────────────────────────
+streamlit==1.35.0
+streamlit-webrtc==0.47.9          # live webcam feed inside Streamlit
+
+# ── Computer Vision & Deep Learning ──────────────────────────
+opencv-python==4.10.0.84          # face detection + frame capture
+tensorflow==2.16.1                # CNN model training & inference
+deepface==0.0.89
+tf-keras==2.16.0
+keras==3.3.3                      # high-level model API (bundled with TF 2.16+)
+Pillow==10.3.0                    # image pre-processing utilities
+
+# ── NLP & Sentiment Analysis ─────────────────────────────────
+nltk==3.8.1                       # tokenisation, stopwords
+vaderSentiment==3.3.2             # rule-based sentiment (fast, no GPU needed)
+transformers==4.41.2              # HuggingFace transformer models (optional upgrade path)
+torch==2.3.0                      # PyTorch backend for HuggingFace models
+
+# ── Data Storage & Analytics ─────────────────────────────────
+pandas==2.2.2                     # DataFrame operations & trend analytics
+sqlalchemy==2.0.30                # ORM layer on top of SQLite
+numpy==1.26.4                     # numerical operations
+
+# ── Async / Streaming (streamlit-webrtc dependency) ──────────
+aiortc==1.9.0
+aiohttp==3.9.5
+
+# ── Visualisation (Dashboard charts) ─────────────────────────
+plotly==5.22.0                    # interactive trend charts
+matplotlib==3.9.0                 # static chart fallback
+
+# ── Utilities ────────────────────────────────────────────────
+python-dotenv==1.0.1              # environment variable management
+loguru==0.7.2                     # structured logging
+av==12.1.0                        # audio/video codec (aiortc dependency)
+
+# ── Voice Analysis ───────────────────────────────────────────
+SpeechRecognition==3.10.4         # STT transcription
+pydub==0.25.1                     # audio manipulation & RMS Energy
+streamlit-mic-recorder==0.0.20    # integrated voice recorder UI component

@@ -1,0 +1,61 @@
+id,title,description,category,cognitive_load,estimated_hours,tags,tier
+1,Organise email inbox,"Sort, label, and archive emails from the past week.",Administrative,1,0.5,"admin,email,organisation",Low
+2,Update meeting notes,Transcribe and format notes from yesterday's standup.,Administrative,1,0.5,"admin,documentation,notes",Low
+3,File expense reports,Submit last month's expense receipts through the HR portal.,Administrative,1,0.5,"admin,finance,hr",Low
+4,Update team calendar,Add upcoming deadlines and review cycles to the shared calendar.,Administrative,1,0.5,"admin,scheduling,team",Low
+5,Respond to routine emails,Reply to low-priority internal emails and status requests.,Communication,2,1.0,"communication,email,low-stress",Low
+6,Review and approve timesheets,Check team timesheets for the week and approve in the system.,Administrative,2,0.5,"admin,hr,management",Low
+7,Read industry newsletter,Browse this week's tech digest and bookmark relevant articles.,Learning,2,0.5,"learning,research,passive",Low
+8,Tidy project documentation folder,Remove duplicate files and rename documents to convention.,Administrative,2,1.0,"admin,documentation,organisation",Low
+9,Watch recorded training video,Complete the 45-minute onboarding video for the new CI/CD tool.,Learning,2,1.0,"learning,training,passive",Low
+10,Update personal task tracker,Review open tickets and ensure statuses are current in Jira.,Administrative,2,0.5,"admin,planning,organisation",Low
+11,Write daily stand-up update,Compose a brief update for the async stand-up channel.,Communication,2,0.25,"communication,team,async",Low
+12,Review pull request comments,Read through open PR comments without responding — note action items.,Engineering,3,1.0,"engineering,code-review,low-stress",Low
+13,Prepare meeting agenda,Draft discussion points for the upcoming sprint planning session.,Administrative,3,0.5,"admin,planning,meetings",Low
+14,Update README file,Refresh the project README with recent environment changes.,Engineering,3,1.0,"engineering,documentation,writing",Low
+15,Organise Slack channels,Archive stale channels and pin key resources in active ones.,Administrative,3,0.5,"admin,communication,team",Low
+16,Re-run test suite on existing branch,Execute unit tests on a known-good branch to verify green state.,Engineering,3,0.5,"engineering,testing,validation",Low
+17,Review closed tickets for patterns,Scan last sprint's resolved tickets to identify recurring issues.,Analysis,3,1.0,"analysis,retrospective,low-stress",Low
+18,Create or update team wiki page,Add a how-to guide for a recently learned tool or process.,Documentation,3,1.5,"documentation,writing,knowledge-sharing",Low
+19,Attend team social / coffee chat,Join the informal 15-minute virtual team coffee session.,Well-being,1,0.25,"well-being,social,team",Low
+20,Take a focused walk break,Step away from screens for a 10-minute mindful walk.,Well-being,1,0.17,"well-being,self-care,break",Low
+21,Write unit tests for existing feature,Add Jest/pytest tests for the authentication module.,Engineering,4,2.0,"engineering,testing,quality",Medium
+22,Fix medium-priority bug,Resolve a reported layout bug in the dashboard table component.,Engineering,4,2.0,"engineering,bugfix,debugging",Medium
+23,Refactor a small module,Improve readability of the user-preferences helper module.,Engineering,5,2.0,"engineering,refactoring,code-quality",Medium
+24,Conduct peer code review,Review and leave constructive comments on two open pull requests.,Engineering,5,1.5,"engineering,code-review,collaboration",Medium
+25,Analyse sprint velocity data,Pull last four sprints' velocity metrics and create a summary chart.,Analysis,5,2.0,"analysis,metrics,reporting",Medium
+26,Implement API endpoint,Build the GET /users/{id}/preferences endpoint per the spec.,Engineering,5,3.0,"engineering,backend,api",Medium
+27,Write technical blog post,Draft a 600-word internal article on the new deployment pipeline.,Communication,5,2.5,"writing,knowledge-sharing,communication",Medium
+28,Create data visualisation dashboard,Build a Plotly chart showing user sign-up trends for Q2.,Analytics,5,3.0,"analytics,visualisation,reporting",Medium
+29,Database schema migration,Write and test the Alembic migration for the new orders table.,Engineering,6,3.0,"engineering,database,migration",Medium
+30,Integrate third-party API,Connect the payment gateway sandbox and test webhook events.,Engineering,6,4.0,"engineering,integration,api",Medium
+31,Lead sprint retrospective,Facilitate the team retrospective and document key action items.,Leadership,4,1.5,"leadership,agile,facilitation",Medium
+32,Create onboarding checklist,Draft a step-by-step onboarding guide for new team members.,Documentation,4,2.0,"documentation,hr,knowledge-sharing",Medium
+33,Perform security patch updates,Apply pending OS and dependency security patches to staging.,Engineering,4,2.0,"engineering,security,devops",Medium
+34,Research competitor features,Explore two competitor products and note three differentiating features.,Research,4,2.0,"research,product,analysis",Medium
+35,Prepare weekly status report,"Compile team progress, blockers, and next-week goals into a report.",Reporting,4,1.5,"reporting,management,communication",Medium
+36,Set up monitoring alerts,Configure Grafana / CloudWatch alerts for API error rate thresholds.,DevOps,5,2.5,"devops,monitoring,infrastructure",Medium
+37,Conduct user interview,Run a 30-minute structured UX interview with a power user.,Research,5,1.5,"research,ux,product",Medium
+38,Update CI/CD pipeline configuration,Add linting and test coverage steps to the GitHub Actions workflow.,DevOps,5,2.0,"devops,ci-cd,automation",Medium
+39,Write project risk register,Identify top-5 risks for the current quarter and propose mitigations.,Management,6,2.0,"management,planning,risk",Medium
+40,Implement caching layer,Add Redis caching to the product catalogue endpoint.,Engineering,6,4.0,"engineering,performance,backend",Medium
+41,Design new system architecture,Produce a C4 architecture diagram for the microservices refactor.,Architecture,7,4.0,"architecture,design,complex",High
+42,Debug production performance issue,Profile and resolve the P0 latency spike reported in checkout flow.,Engineering,8,4.0,"engineering,debugging,production,complex",High
+43,Build machine learning pipeline,Design and implement an end-to-end feature engineering pipeline.,ML/AI,9,6.0,"ml,ai,data-science,complex",High
+44,Lead technical interview,Conduct a two-hour live coding and system design interview session.,Leadership,7,2.5,"leadership,hiring,technical",High
+45,Architect distributed caching strategy,Design a multi-region Redis cluster strategy with failover planning.,Architecture,9,5.0,"architecture,distributed-systems,complex",High
+46,Write engineering RFC,Draft a Request for Comments on migrating to event-driven architecture.,Engineering,8,5.0,"engineering,architecture,writing,leadership",High
+47,Resolve critical security vulnerability,Investigate the reported SQL injection vector and deploy a fix.,Engineering,9,6.0,"engineering,security,critical,complex",High
+48,Define OKRs for next quarter,Facilitate team OKR planning session and write final measurable goals.,Leadership,7,3.0,"leadership,strategy,planning",High
+49,Prototype new product feature,Build a functional MVP of the AI-driven search feature from scratch.,Engineering,8,6.0,"engineering,innovation,product,complex",High
+50,Present roadmap to stakeholders,Prepare and deliver a 45-minute quarterly roadmap presentation.,Leadership,7,3.0,"leadership,communication,presentation",High
+51,Implement real-time data pipeline,Build a Kafka consumer pipeline for streaming user event data.,Engineering,9,8.0,"engineering,data,streaming,complex",High
+52,Create ML model evaluation framework,Build reproducible evaluation harness with cross-validation and bias tests.,ML/AI,8,5.0,"ml,ai,evaluation,quality",High
+53,Negotiate vendor contract,Evaluate two SaaS vendor proposals and draft negotiation terms.,Management,7,3.0,"management,procurement,negotiation",High
+54,Plan and run hackathon,"Organise a 24-hour internal hackathon: logistics, judging and comms.",Leadership,7,8.0,"leadership,event,innovation,team",High
+55,Implement end-to-end encryption,Design and integrate E2E encryption for user messages using libsodium.,Engineering,10,8.0,"engineering,security,complex,cryptography",High
+56,Build graph neural network model,Research and implement a GNN for the social recommendation engine.,ML/AI,10,10.0,"ml,ai,research,complex",High
+57,Design capacity planning model,Build a financial and headcount model for next-year team growth.,Management,8,6.0,"management,planning,finance,strategy",High
+58,Create accessibility audit and fix plan,Run WCAG 2.1 AA audit and prioritise top-10 remediation items.,Engineering,7,4.0,"engineering,accessibility,quality,complex",High
+59,Architect multi-tenant SaaS solution,"Design the tenant isolation, billing and data strategy for SaaS launch.",Architecture,10,8.0,"architecture,saas,strategy,complex",High
+60,Build automated regression test suite,Create a Selenium / Playwright full-regression suite for the web app.,Engineering,7,5.0,"engineering,testing,automation,quality",High

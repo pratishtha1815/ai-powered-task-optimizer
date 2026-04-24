@@ -1,0 +1,34 @@
+# ─────────────────────────────────────────────────────────────
+#  requirements-minimal.txt
+#  Quick-start install — excludes heavy ML packages (TF, PyTorch)
+#  Use this to run the Streamlit app and all unit tests immediately.
+#  For full CNN training, install requirements.txt instead.
+#
+#  Install: pip install -r requirements-minimal.txt
+# ─────────────────────────────────────────────────────────────
+
+# ── Web UI ────────────────────────────────────────────────────
+streamlit==1.35.0
+
+# ── Computer Vision (face detection only — no CNN inference) ─
+opencv-python==4.10.0.84
+Pillow==10.3.0
+numpy==1.26.4
+
+# ── NLP ───────────────────────────────────────────────────────
+nltk==3.8.1
+vaderSentiment==3.3.2
+
+# ── Data Storage ──────────────────────────────────────────────
+pandas==2.2.2
+sqlalchemy==2.0.30
+
+# ── Visualisation ─────────────────────────────────────────────
+plotly==5.22.0
+
+# ── Utilities ─────────────────────────────────────────────────
+python-dotenv==1.0.1
+loguru==0.7.2
+
+# ── Testing ───────────────────────────────────────────────────
+pytest==8.2.0
