@@ -5,7 +5,7 @@ streamlit-mic-recorder
 
 # ── Computer Vision & Deep Learning ──────────────────────────
 opencv-python-headless
-tensorflow
+tensorflow==2.15.0
 deepface
 Pillow
 
