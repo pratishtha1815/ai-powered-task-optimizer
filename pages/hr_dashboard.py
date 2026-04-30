@@ -290,6 +290,30 @@ def render_hr_dashboard() -> None:
 
     db = get_db()
 
+    # ── Inject CSS for HR Dashboard components ───────────────
+    st.markdown("""
+    <style>
+    .alert-card {
+        background: rgba(248, 81, 73, 0.07);
+        border: 1px solid rgba(248, 81, 73, 0.25);
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin-bottom: 12px;
+    }
+    .section-header {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 28px 0 14px;
+        padding-left: 12px;
+        border-left: 4px solid #58a6ff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #e6edf3;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # ── Page header ──────────────────────────────────────────
     st.markdown("""
     <div style="margin-bottom:24px;">
@@ -329,14 +353,18 @@ def render_hr_dashboard() -> None:
         n_emp = len(employees)
         _render_kpi_card("Active Employees", f"{n_emp:02d}", icon="👥")
     with k2:
-        avg_wb = summary_df["avg_wellbeing"].mean() * 100 if not summary_df.empty else 0
+        if not summary_df.empty and summary_df["avg_wellbeing"].notnull().any():
+            avg_wb = summary_df["avg_wellbeing"].mean() * 100
+        else:
+            avg_wb = 0
         _render_kpi_card("System Wellness", f"{avg_wb:.0f}%", icon="🧠")
     with k3:
         n_alerts = len(active_alerts)
         _render_kpi_card("Policy Alerts", f"{n_alerts:02d}", icon="🚨")
     with k4:
-        engagement = db.get_engagement_metrics(30)["total_accepted"]
-        _render_kpi_card("Tasks Accepted", f"{engagement:02d}", icon="✅")
+        engagement_data = db.get_engagement_metrics(30)
+        n_tasks = engagement_data.get("total_accepted", 0)
+        _render_kpi_card("Tasks Accepted", f"{n_tasks:02d}", icon="✅")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -506,14 +534,11 @@ def render_hr_dashboard() -> None:
 # Helpers
 # ─────────────────────────────────────────────────────────────
 def _render_kpi_card(label: str, value: str, delta: str = "", icon: str = "📈") -> None:
+    delta_html = f'<div style="font-size:0.8rem; color:#3fb950; margin-top:4px;">{delta}</div>' if delta else ''
     st.markdown(f"""
     <div class="metric-card" style="padding: 24px !important;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <div style="font-size:0.85rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">{label}</div>
-                <div style="font-size:2.2rem; font-weight:800; color:var(--text-primary); margin-top:4px;">{value}</div>
-                {f'<div style="font-size:0.8rem; color:var(--accent-green); margin-top:4px;">{delta}</div>' if delta else ''}
-            </div>
+            <div><div style="font-size:0.85rem; color:#8b949e; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">{label}</div><div style="font-size:2.2rem; font-weight:800; color:#c9d1d9; margin-top:4px;">{value}</div>{delta_html}</div>
             <div style="font-size:2rem; opacity:0.8;">{icon}</div>
         </div>
     </div>
@@ -606,44 +631,11 @@ def _seed_demo_data(db: WellbeingDB) -> None:
             )
 
 
-def _render_alert_card(alert: dict, db: WellbeingDB) -> None:
-    """Render an action card for a system alert."""
-    a_id = alert["id"]
-    st.markdown(f"""
-    <div style="background:rgba(248,81,73,0.08); border:1px solid rgba(248,81,73,0.25);
-                border-radius:12px; padding:18px 22px; margin-bottom:16px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-                <div style="font-size:0.75rem; color:#f85149; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">
-                    Critical Policy Violation
-                </div>
-                <div style="font-size:1.1rem; font-weight:700; color:var(--text-primary);">
-                    {alert['employee_name']} ({alert['employee_id']})
-                </div>
-                <div style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;">
-                    Condition: <b>{alert['condition']}</b> (Score: {alert['wellbeing_score']:.2f})
-                </div>
-            </div>
-            <div style="font-size:0.8rem; color:#8b949e; text-align:right;">
-                {alert['timestamp'][:16]}
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Action Button
-    col_a, col_b = st.columns([1, 4])
-    with col_a:
-        if st.button("Dismiss", key=f"dismiss_{a_id}", use_container_width=True):
-            db.dismiss_alert(a_id)
-            st.rerun()
-
-
 def _wellbeing_colour(score: float) -> str:
     """Map score to semantic CSS variable."""
-    if score >= 0.70: return "var(--accent-green)"
-    if score >= 0.40: return "var(--accent-blue)"
-    return "var(--accent-red)"
+    if score >= 0.70: return "#3fb950"
+    if score >= 0.40: return "#58a6ff"
+    return "#f85149"
 
 
 def _highlight(val):
@@ -655,3 +647,6 @@ def _highlight(val):
     except:
         pass
     return ""
+
+if __name__ == "__main__":
+    render_hr_dashboard()

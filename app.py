@@ -131,10 +131,9 @@ html, body, [class*="css"] {
 .stButton > button:active {
     transform: scale(0.98);
 }
-/* Focus on the main analyze button */
+/* Focus on the main action buttons */
 div[data-testid="stForm"] .stButton > button, 
-.stButton > button[kind="primary"],
-.stButton > button:contains("Analyse") {
+.stButton > button[kind="primary"] {
     animation: pulse-glow 3s infinite;
     border: 1px solid var(--accent-blue)88 !important;
 }

@@ -217,7 +217,39 @@ class WellbeingDB:
         )
         self._Session = sessionmaker(bind=self._engine)
         Base.metadata.create_all(self._engine)
+        
+        # ── Migration: Add voice columns if missing ────────────
+        self._migrate_db()
+        
         logger.info(f"WellbeingDB connected → {db_url}")
+
+    def _migrate_db(self):
+        """Safe SQLite migration to add columns if they don't exist."""
+        # Simple sqlite3 check avoids complex Alembic overhead for local DB
+        import sqlite3
+        if "sqlite" not in self.db_url: return
+        
+        db_path = self.db_url.replace("sqlite:///", "")
+        if not db_path or db_path == ":memory:": return
+        
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            # Check for voice_score
+            cursor.execute("PRAGMA table_info(employee_logs)")
+            columns = [c[1] for c in cursor.fetchall()]
+            
+            if "voice_score" not in columns:
+                logger.info("Migrating DB: Adding voice_score column")
+                cursor.execute("ALTER TABLE employee_logs ADD COLUMN voice_score REAL")
+            if "voice_transcript" not in columns:
+                logger.info("Migrating DB: Adding voice_transcript column")
+                cursor.execute("ALTER TABLE employee_logs ADD COLUMN voice_transcript TEXT")
+                
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            logger.error(f"Migration failed: {e}")
 
     # ── Context-manager helper ────────────────────────────────
     def _session(self) -> Session:

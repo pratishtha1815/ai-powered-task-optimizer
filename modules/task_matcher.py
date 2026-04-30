@@ -122,6 +122,7 @@ class TaskRecommendation:
     explanation:     str
     emotion_score:   float    = 0.0
     sentiment_score: float    = 0.0
+    voice_score:     float    = 0.0
 
     def to_dict(self) -> dict:
         return {
@@ -130,6 +131,7 @@ class TaskRecommendation:
             "tier_range":      self.tier_range,
             "emotion_score":   self.emotion_score,
             "sentiment_score": self.sentiment_score,
+            "voice_score":     self.voice_score,
             "explanation":     self.explanation,
             "tasks":           [t.to_dict() for t in self.tasks],
         }
@@ -383,12 +385,14 @@ class TaskMatcher:
             explanation     = explanation,
             emotion_score   = round(e_score, 4),
             sentiment_score = round(s_score, 4),
+            voice_score     = round(v_score, 4),
         )
 
     def recommend_from_scores(
         self,
         emotion_score:   float,
         sentiment_score: float,
+        voice_score:     float = 0.5,
         top_n:           int = DEFAULT_TOP_N,
     ) -> TaskRecommendation:
         """
@@ -398,6 +402,7 @@ class TaskMatcher:
         return self.recommend(
             emotion_score=emotion_score,
             sentiment_score=sentiment_score,
+            voice_score=voice_score,
             top_n=top_n,
         )
 

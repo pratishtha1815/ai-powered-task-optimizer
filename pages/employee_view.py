@@ -107,14 +107,17 @@ def _wellbeing_colour(score: float) -> str:
 
 
 def _render_emotion_card(emotion: str, confidence: float) -> None:
-    colour, icon = _EMOTION_COLOURS.get(emotion, ("#8b949e", "❓"))
+    # Use a safe fallback that doesn't look like an 'error'
+    colour, icon = _EMOTION_COLOURS.get(emotion, ("#8b949e", "📷"))
+    if emotion == "Unknown":
+        icon = "👤"
     st.markdown(f"""
     <div class="metric-card" style="text-align:center; padding: 30px 20px !important;">
         <div style="font-size:3.5rem; margin-bottom:12px; filter: drop-shadow(0 0 10px {colour}44);">{icon}</div>
         <div style="font-size:1.8rem; font-weight:800; color:{colour}; letter-spacing:-0.01em;">
             {emotion}
         </div>
-        <div style="font-size:0.9rem; color:var(--text-muted); margin-top:8px;">
+        <div style="font-size:0.9rem; color:#8b949e; margin-top:8px;">
             Confidence: <b style="color:{colour}; font-weight:700;">{confidence:.0%}</b>
         </div>
     </div>
@@ -122,56 +125,68 @@ def _render_emotion_card(emotion: str, confidence: float) -> None:
 
 
 def _render_wellbeing_gauge(score: float, emotion_wb: float, sentiment_wb: float, voice_wb: float) -> None:
+    # Coerce to float just in case
+    score        = float(score) if score is not None else 0.5
+    emotion_wb   = float(emotion_wb) if emotion_wb is not None else 0.5
+    sentiment_wb = float(sentiment_wb) if sentiment_wb is not None else 0.5
+    voice_wb     = float(voice_wb) if voice_wb is not None else 0.5
+
     colour    = _wellbeing_colour(score)
     pct       = int(score * 100)
     bar_width = int(score * 100)
 
     from config import WEIGHT_EMOTION, WEIGHT_SENTIMENT, WEIGHT_VOICE
-    w_e = int(WEIGHT_EMOTION * 100)
-    w_s = int(WEIGHT_SENTIMENT * 100)
-    w_v = int(WEIGHT_VOICE * 100)
+    w_e = int((WEIGHT_EMOTION or 0.4) * 100)
+    w_s = int((WEIGHT_SENTIMENT or 0.3) * 100)
+    w_v = int((WEIGHT_VOICE or 0.3) * 100)
+
+    # Pre-compute all conditional colours — avoids ternaries inside HTML strings
+    overload_col  = "#f85149" if score < 0.35  else "#8b949e"
+    balanced_col  = "#d29922" if 0.35 <= score < 0.65 else "#8b949e"
+    peakflow_col  = "#3fb950" if score >= 0.65 else "#8b949e"
+    glow_hex      = colour + "44"
+    grad_start    = colour + "88"
 
     st.markdown(f"""
     <div class="metric-card">
-        <div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; 
+        <div style="font-size:0.85rem; color:#8b949e; text-transform:uppercase;
                     font-weight:600; letter-spacing:0.1em; margin-bottom:12px; text-align:center;">
             Optimization Score
         </div>
         <div style="text-align:center;">
-            <span style="font-size:4.5rem; font-weight:800; color:{colour}; line-height:1;
-                         text-shadow: 0 0 20px {colour}22;">{pct}</span>
-            <span style="font-size:1.2rem; color:var(--text-muted); font-weight:500;">/100</span>
+            <span style="font-size:4.5rem; font-weight:800; color:{colour}; line-height:1;">{pct}</span>
+            <span style="font-size:1.2rem; color:#8b949e; font-weight:500;">/100</span>
         </div>
-        
-        <div style="margin: 20px 0 10px;">
-            <div style="background:rgba(255,255,255,0.05); border-radius:999px; height:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.05);">
-                <div style="background: linear-gradient(90deg, {colour}88, {colour}); 
-                            width:{bar_width}%; height:100%; border-radius:999px; 
-                            box-shadow: 0 0 15px {colour}44;"></div>
+        <div style="margin:20px 0 10px;">
+            <div style="background:rgba(255,255,255,0.05); border-radius:999px; height:12px;
+                        overflow:hidden; border:1px solid rgba(255,255,255,0.05);">
+                <div style="background:linear-gradient(90deg,{grad_start},{colour});
+                            width:{bar_width}%; height:100%; border-radius:999px;
+                            box-shadow:0 0 15px {glow_hex};"></div>
             </div>
         </div>
-        
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted); margin-bottom:24px; padding:0 4px;">
-            <span style="color:{'#f85149' if score < 0.35 else 'var(--text-muted)'};">Overload</span>
-            <span style="color:{'#d29922' if 0.35 <= score < 0.65 else 'var(--text-muted)'};">Balanced</span>
-            <span style="color:{'#3fb950' if score >= 0.65 else 'var(--text-muted)'};">Peak Flow</span>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem;
+                    color:#8b949e; margin-bottom:24px; padding:0 4px;">
+            <span style="color:{overload_col};">Overload</span>
+            <span style="color:{balanced_col};">Balanced</span>
+            <span style="color:{peakflow_col};">Peak Flow</span>
         </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; padding-top:15px; border-top: 1px solid var(--glass-border);">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;
+                    padding-top:15px; border-top:1px solid rgba(255,255,255,0.08);">
             <div style="text-align:center;">
-                <div style="color:var(--text-muted); font-size:0.75rem; font-weight:600; margin-bottom:4px;">FACE</div>
+                <div style="color:#8b949e; font-size:0.75rem; font-weight:600; margin-bottom:4px;">FACE</div>
                 <div style="color:{colour}; font-size:1.1rem; font-weight:700;">{emotion_wb:.2f}</div>
-                <div style="font-size:0.6rem; color:var(--text-muted);">weight {w_e}%</div>
+                <div style="font-size:0.6rem; color:#8b949e;">weight {w_e}%</div>
             </div>
             <div style="text-align:center;">
-                <div style="color:var(--text-muted); font-size:0.75rem; font-weight:600; margin-bottom:4px;">TEXT</div>
+                <div style="color:#8b949e; font-size:0.75rem; font-weight:600; margin-bottom:4px;">TEXT</div>
                 <div style="color:{colour}; font-size:1.1rem; font-weight:700;">{sentiment_wb:.2f}</div>
-                <div style="font-size:0.6rem; color:var(--text-muted);">weight {w_s}%</div>
+                <div style="font-size:0.6rem; color:#8b949e;">weight {w_s}%</div>
             </div>
             <div style="text-align:center;">
-                <div style="color:var(--text-muted); font-size:0.75rem; font-weight:600; margin-bottom:4px;">VOICE</div>
+                <div style="color:#8b949e; font-size:0.75rem; font-weight:600; margin-bottom:4px;">VOICE</div>
                 <div style="color:{colour}; font-size:1.1rem; font-weight:700;">{voice_wb:.2f}</div>
-                <div style="font-size:0.6rem; color:var(--text-muted);">weight {w_v}%</div>
+                <div style="font-size:0.6rem; color:#8b949e;">weight {w_v}%</div>
             </div>
         </div>
     </div>
@@ -187,9 +202,9 @@ def _render_task_card(task, rank: int, employee_id: str, wb_score: float) -> Non
     )
     hours_label = f"{task.estimated_hours:.1f}h"
     tags_html   = " ".join(
-        f'<span style="background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); '
+        f'<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); '
         f'border-radius:4px; padding:3px 8px; font-size:0.7rem; '
-        f'color:var(--text-muted); font-weight:500;">{t}</span>'
+        f'color:#8b949e; font-weight:500;">{t}</span>'
         for t in task.tags[:3]
     )
     
@@ -197,16 +212,16 @@ def _render_task_card(task, rank: int, employee_id: str, wb_score: float) -> Non
     <div class="task-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
             <div style="display:flex; gap:12px; align-items:center;">
-                <div style="background:var(--accent-blue)22; color:var(--accent-blue); 
+                <div style="background:#58a6ff22; color:#58a6ff; 
                             width:24px; height:24px; border-radius:50%; 
                             display:flex; align-items:center; justify-content:center;
-                            font-size:0.75rem; font-weight:800; border:1px solid var(--accent-blue)44;">
+                            font-size:0.75rem; font-weight:800; border:1px solid #58a6ff44;">
                     {rank}
                 </div>
-                <div style="font-weight:700; font-size:1.1rem; color:var(--text-primary);">{task.title}</div>
+                <div style="font-weight:700; font-size:1.1rem; color:#c9d1d9;">{task.title}</div>
             </div>
             <div style="display:flex; gap:10px; align-items:center;">
-                <span style="font-size:0.8rem; color:var(--text-muted); font-weight:500;">⏱ {hours_label}</span>
+                <span style="font-size:0.8rem; color:#8b949e; font-weight:500;">⏱ {hours_label}</span>
                 <span style="background:{tier_colour}22; color:{tier_colour}; 
                              border:1px solid {tier_colour}44; 
                              border-radius:6px; padding:4px 10px; 
@@ -215,11 +230,11 @@ def _render_task_card(task, rank: int, employee_id: str, wb_score: float) -> Non
                 </span>
             </div>
         </div>
-        <div style="font-size:0.92rem; color:var(--text-muted); margin-bottom:16px; line-height:1.5; padding-left:36px;">
+        <div style="font-size:0.92rem; color:#8b949e; margin-bottom:16px; line-height:1.5; padding-left:36px;">
             {task.description}
         </div>
         <div style="margin-left:36px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
-            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-right:4px;">
+            <span style="font-size:0.8rem; color:#8b949e; font-weight:600; margin-right:4px;">
                 📁 {task.category}
             </span>
             {tags_html}
@@ -302,6 +317,17 @@ def render_employee_view() -> None:
     if not emp_name or not emp_id:
         st.info("👋 Please enter your **Name** and **Employee ID** in the sidebar to begin.")
         return
+
+    # ── Reset state if employee changes ───────────────────────
+    if st.session_state.get("prev_emp_id") != emp_id:
+        keys_to_clear = [
+            "last_recommendation", "last_sentiment", "last_voice",
+            "last_e_score", "last_s_score", "last_v_score",
+            "emotion_result", "emotion_score", "voice_bytes"
+        ]
+        for k in keys_to_clear:
+            if k in st.session_state: del st.session_state[k]
+        st.session_state["prev_emp_id"] = emp_id
 
     # ── Layout: two columns ───────────────────────────────────
     col_cam, col_main = st.columns([4, 6], gap="large")
@@ -507,12 +533,12 @@ def render_employee_view() -> None:
                         notes            = f"[Text: {checkin_text[:200]}]",
                     )
 
-            rec      = st.session_state["last_recommendation"]
-            s_result = st.session_state["last_sentiment"]
-            v_result = st.session_state["last_voice"]
-            e_score  = st.session_state["last_e_score"]
-            s_score  = st.session_state["last_s_score"]
-            v_score  = st.session_state["last_v_score"]
+            rec      = st.session_state.get("last_recommendation")
+            s_result = st.session_state.get("last_sentiment")
+            v_result = st.session_state.get("last_voice")
+            e_score  = st.session_state.get("last_e_score", 0.5)
+            s_score  = st.session_state.get("last_s_score", 0.5)
+            v_score  = st.session_state.get("last_v_score", 0.5)
 
             # ── Sentiment result ──────────────────────────────
             st.markdown('<div class="section-header">💬 Sentiment Analysis</div>',
@@ -526,7 +552,7 @@ def render_employee_view() -> None:
                 with sc:
                     st.markdown(f"""
                     <div class="metric-card" style="text-align:center; padding:20px !important;">
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Tone</div>
+                        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; text-transform:uppercase;">Tone</div>
                         <div style="color:{sent_colour}; font-size:1.3rem; font-weight:800; margin-top:8px;">
                             {sent_icon} {s_result.label}
                         </div>
@@ -535,8 +561,8 @@ def render_employee_view() -> None:
                 with sl:
                     st.markdown(f"""
                     <div class="metric-card" style="text-align:center; padding:20px !important;">
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Score</div>
-                        <div style="color:var(--accent-blue); font-size:1.3rem; font-weight:800; margin-top:8px;">
+                        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; text-transform:uppercase;">Score</div>
+                        <div style="color:#58a6ff; font-size:1.3rem; font-weight:800; margin-top:8px;">
                             {s_result.compound:+.3f}
                         </div>
                     </div>
@@ -545,8 +571,8 @@ def render_employee_view() -> None:
                     kw_text = ", ".join(s_result.keywords[:3]) if s_result.keywords else "none"
                     st.markdown(f"""
                     <div class="metric-card" style="text-align:center; padding:20px !important;">
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Context</div>
-                        <div style="color:var(--text-muted); font-size:0.9rem; margin-top:8px; font-weight:500;">
+                        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; text-transform:uppercase;">Context</div>
+                        <div style="color:#8b949e; font-size:0.9rem; margin-top:8px; font-weight:500;">
                             {kw_text}
                         </div>
                     </div>
@@ -564,7 +590,7 @@ def render_employee_view() -> None:
                     v_col, v_icon = _SENTIMENT_COLOURS.get(v_sent, ("#8b949e", "➖"))
                     st.markdown(f"""
                     <div class="metric-card" style="text-align:center; padding:20px !important;">
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Vocal Tone</div>
+                        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; text-transform:uppercase;">Vocal Tone</div>
                         <div style="color:{v_col}; font-size:1.2rem; font-weight:800; margin-top:8px;">
                             {v_icon} {v_sent}
                         </div>
@@ -576,8 +602,8 @@ def render_employee_view() -> None:
                     v_s_col  = "#3fb950" if v_vit > 0.7 else "#d29922" if v_vit > 0.4 else "#f85149"
                     st.markdown(f"""
                     <div class="metric-card" style="text-align:center; padding:20px !important;">
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Energy</div>
-                        <div style="color:var(--accent-purple); font-size:1.3rem; font-weight:800; margin:8px 0 4px;">
+                        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; text-transform:uppercase;">Energy</div>
+                        <div style="color:#bc8cff; font-size:1.3rem; font-weight:800; margin:8px 0 4px;">
                             {v_vit:.2f}
                         </div>
                         <div style="font-size:0.7rem; color:{v_s_col}; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
@@ -588,53 +614,57 @@ def render_employee_view() -> None:
                 with vv:
                     st.markdown(f"""
                     <div class="metric-card" style="text-align:center; padding:20px !important;">
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Speech Info</div>
-                        <div style="color:var(--text-muted); font-size:0.78rem; margin-top:8px; font-style:italic;">
+                        <div style="font-size:0.8rem; color:#8b949e; font-weight:600; text-transform:uppercase;">Speech Info</div>
+                        <div style="color:#8b949e; font-size:0.78rem; margin-top:8px; font-style:italic;">
                             "{v_result.transcript[:35]}..."
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
 
             # ── Well-being gauge ──────────────────────────────
-            st.markdown('<div class="section-header">⚡ Overall Well-being Score</div>',
-                        unsafe_allow_html=True)
-            _render_wellbeing_gauge(rec.wellbeing_score, e_score, s_score, v_score)
+            if rec:
+                st.markdown('<div class="section-header">⚡ Overall Well-being Score</div>',
+                            unsafe_allow_html=True)
+                try:
+                    _render_wellbeing_gauge(rec.wellbeing_score, e_score, s_score, v_score)
+                except Exception as ex:
+                    st.error(f"Error rendering Optimization Score: {ex}")
 
-            # ── Tier explanation ──────────────────────────────
-            tier_colour, tier_icon = _TIER_COLOURS.get(rec.tier, ("#8b949e", "⚪"))
-            st.markdown(f"""
-            <div style="background:rgba(88,166,255,0.06);
-                        border:1px solid rgba(88,166,255,0.15);
-                        border-radius:10px; padding:14px 18px;
-                        font-size:0.88rem; color:#8b949e; margin:12px 0;">
-                <span style="font-size:1rem;">{tier_icon}</span>
-                <b style="color:{tier_colour};"> {rec.tier} Load Tasks</b>
-                &nbsp;—&nbsp;{rec.explanation}
-            </div>
-            """, unsafe_allow_html=True)
-
-            # ── Task recommendations ──────────────────────────
-            st.markdown(
-                f'<div class="section-header">📋 Recommended Tasks '
-                f'<span style="font-size:0.8rem; color:#8b949e; font-weight:400;">'
-                f'(Top {len(rec.tasks)})</span></div>',
-                unsafe_allow_html=True,
-            )
-
-            if rec.tasks:
-                for i, task in enumerate(rec.tasks, start=1):
-                    _render_task_card(task, i, emp_id, rec.wellbeing_score)
-
-                # ── Log success ───────────────────────────────
-                st.markdown("""
-                <div style="display:flex; align-items:center; gap:8px;
-                            font-size:0.8rem; color:#3fb950; margin-top:14px;">
-                    ✅ Check-in saved to your wellness log.
+                # ── Tier explanation ──────────────────────────
+                tier_colour, tier_icon = _TIER_COLOURS.get(rec.tier, ("#8b949e", "⚪"))
+                st.markdown(f"""
+                <div style="background:rgba(88,166,255,0.06);
+                            border:1px solid rgba(88,166,255,0.15);
+                            border-radius:10px; padding:14px 18px;
+                            font-size:0.88rem; color:#8b949e; margin:12px 0;">
+                    <span style="font-size:1rem;">{tier_icon}</span>
+                    <b style="color:{tier_colour};"> {rec.tier} Load Tasks</b>
+                    &nbsp;—&nbsp;{rec.explanation}
                 </div>
                 """, unsafe_allow_html=True)
-            else:
-                st.warning("No tasks found for your current tier. "
-                           "Please run `python scripts/seed_tasks.py` first.")
+
+                # ── Task recommendations ──────────────────────
+                st.markdown(
+                    f'<div class="section-header">📋 Recommended Tasks '
+                    f'<span style="font-size:0.8rem; color:#8b949e; font-weight:400;">'
+                    f'(Top {len(rec.tasks)})</span></div>',
+                    unsafe_allow_html=True,
+                )
+
+                if rec.tasks:
+                    for i, task in enumerate(rec.tasks, start=1):
+                        _render_task_card(task, i, emp_id, rec.wellbeing_score)
+
+                    # ── Log success ───────────────────────────
+                    st.markdown("""
+                    <div style="display:flex; align-items:center; gap:8px;
+                                font-size:0.8rem; color:#3fb950; margin-top:14px;">
+                        ✅ Check-in saved to your wellness log.
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.warning("No tasks found for your current tier. "
+                               "Please run `python scripts/seed_tasks.py` first.")
 
         else:
             # ── Personal Dashboard (Before Check-in) ──────────
@@ -642,13 +672,13 @@ def render_employee_view() -> None:
             history_df = db.get_employee_trend(emp_id, days=7)
             
             st.markdown(f"""
-            <div style="background:var(--bg-card); border:1px solid #30363d;
+            <div style="background:#161b22; border:1px solid #30363d;
                         border-radius:12px; padding:30px; margin-top:8px; 
-                        border-left: 4px solid var(--accent-blue);">
-                <div style="font-size:1.4rem; font-weight:700; color:var(--accent-blue);">
+                        border-left: 4px solid #58a6ff;">
+                <div style="font-size:1.4rem; font-weight:700; color:#58a6ff;">
                     Welcome back, {emp_name}! 👋
                 </div>
-                <div style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;">
+                <div style="font-size:0.9rem; color:#8b949e; margin-top:4px;">
                     Enter your details above to start today's multi-modal check-in.
                 </div>
             </div>
@@ -679,18 +709,21 @@ def render_employee_view() -> None:
                 last_entry = history_df.iloc[-1]
                 avg_score = history_df["wellbeing_score"].mean()
                 
+                last_score_val = float(last_entry.get('wellbeing_score', 0))
+                avg_score_val  = float(avg_score or 0)
+
                 with c1:
                     st.markdown(f"""
                     <div class="metric-card">
-                        <div style="font-size:0.75rem; color:var(--text-muted);">Last Score</div>
-                        <div style="font-size:1.2rem; font-weight:700; color:var(--accent-cyan);">{last_entry['wellbeing_score']:.2f}</div>
+                        <div style="font-size:0.75rem; color:#8b949e;">Last Score</div>
+                        <div style="font-size:1.2rem; font-weight:700; color:#39c5bb;">{last_score_val:.2f}</div>
                     </div>
                     """, unsafe_allow_html=True)
                 with c2:
                     st.markdown(f"""
                     <div class="metric-card">
-                        <div style="font-size:0.75rem; color:var(--text-muted);">7-Day Average</div>
-                        <div style="font-size:1.2rem; font-weight:700; color:var(--accent-purple);">{avg_score:.2f}</div>
+                        <div style="font-size:0.75rem; color:#8b949e;">7-Day Average</div>
+                        <div style="font-size:1.2rem; font-weight:700; color:#bc8cff;">{avg_score_val:.2f}</div>
                     </div>
                     """, unsafe_allow_html=True)
             else:

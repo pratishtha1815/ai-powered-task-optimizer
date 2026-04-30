@@ -189,7 +189,7 @@ class EmotionDetector:
             results = DeepFace.analyze(
                 img_path=bgr_frame,
                 actions=['emotion'],
-                enforce_detection=True,
+                enforce_detection=False,
                 detector_backend=self.backend,
                 align=False,   # faster
                 silent=True
