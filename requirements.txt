@@ -5,10 +5,8 @@ streamlit-mic-recorder
 
 # ── Computer Vision & Deep Learning ──────────────────────────
 opencv-python-headless
-tensorflow-cpu
+tensorflow
 deepface
-tf-keras
-keras
 Pillow
 
 # ── NLP & Sentiment Analysis ─────────────────────────────────
