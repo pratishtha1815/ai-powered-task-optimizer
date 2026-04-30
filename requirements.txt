@@ -1,36 +1,15 @@
-# ── Web UI ───────────────────────────────────────────────────
 streamlit
 streamlit-webrtc
 streamlit-mic-recorder
-
-# ── Computer Vision & Deep Learning ──────────────────────────
 opencv-python-headless
-tensorflow==2.15.0
 deepface
 Pillow
-
-# ── NLP & Sentiment Analysis ─────────────────────────────────
-nltk
 vaderSentiment
-
-# ── Data Storage & Analytics ─────────────────────────────────
 pandas
 sqlalchemy
 numpy
-
-# ── Async / Streaming ────────────────────────────────────────
-aiortc
-aiohttp
-av
-
-# ── Visualisation ─────────────────────────────────────────────
 plotly
-matplotlib
-
-# ── Utilities ────────────────────────────────────────────────
 python-dotenv
 loguru
-
-# ── Voice Analysis ───────────────────────────────────────────
 SpeechRecognition
 pydub
