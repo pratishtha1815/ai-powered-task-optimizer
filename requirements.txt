@@ -1,9 +1,3 @@
-# ─────────────────────────────────────────────────────────────
-#  AI-Powered Task Optimizer — requirements.txt
-#  Install with:  pip install -r requirements.txt
-# ─────────────────────────────────────────────────────────────
-
-# ── Web UI ───────────────────────────────────────────────────
 # ── Web UI ───────────────────────────────────────────────────
 streamlit
 streamlit-webrtc
@@ -11,7 +5,7 @@ streamlit-mic-recorder
 
 # ── Computer Vision & Deep Learning ──────────────────────────
 opencv-python-headless
-tensorflow
+tensorflow-cpu
 deepface
 tf-keras
 keras
@@ -20,8 +14,6 @@ Pillow
 # ── NLP & Sentiment Analysis ─────────────────────────────────
 nltk
 vaderSentiment
-transformers
-torch
 
 # ── Data Storage & Analytics ─────────────────────────────────
 pandas
@@ -44,4 +36,3 @@ loguru
 # ── Voice Analysis ───────────────────────────────────────────
 SpeechRecognition
 pydub
-
