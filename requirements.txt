@@ -2,7 +2,6 @@ streamlit
 streamlit-webrtc
 streamlit-mic-recorder
 opencv-python-headless
-deepface
 Pillow
 vaderSentiment
 pandas
