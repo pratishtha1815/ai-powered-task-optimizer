@@ -496,7 +496,7 @@ def render_hr_dashboard() -> None:
             return ""
 
         st.dataframe(
-            summary_df.style.applymap(
+            summary_df.style.map(
                 _highlight,
                 subset=["last_wellbeing", "avg_wellbeing"]
             ),
